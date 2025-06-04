@@ -36,9 +36,9 @@ We propose **CURE**, a novel reinforcement learning framework that co-evolves LL
 
 
 ## 📰 Latest Updates
-* **[2025-05-26]** 🔥 We release a comprehensive evaluation benchmark and **six coding datasets to assess the overall coding ability of LLMs**, including one-shot coding, unit test generation, and Best-of-N evaluation. Both API-based and vLLM-based inference are supported. **You can easily evaluate your model!**
-* **[2025-05-26]** 🔥 We release the training datasets and codes, organized into four modules—sampling, execution, reward assignment, and training. The code is **flexible to modify** or customize for your coding-RL-related projects.
-* **[2025-05-26]** 🔥 We release our optimized models, [ReasonFlux-Coder-7B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-7B) and [ReasonFlux-Coder-14B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-14B), which outperform similarly sized Qwen Coders and DeepSeek Coders, and naturally fit into common test-time scaling and agentic coding pipelines. We also release our Long-CoT model [ReasonFlux-Coder-4B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-4B), outperforming Qwen3-4B while achieving 64.8% efficiency in unit test generation.
+* **[2025-06-03]** 🔥 We release a comprehensive evaluation benchmark and **six coding datasets to assess the overall coding ability of LLMs**, including one-shot coding, unit test generation, and Best-of-N evaluation. Both API-based and vLLM-based inference are supported. **You can easily evaluate your model!**
+* **[2025-06-03]** 🔥 We release the training datasets and codes, organized into four modules—sampling, execution, reward assignment, and training. The code is **flexible to modify** or customize for your coding-RL-related projects.
+* **[2025-06-03]** 🔥 We release our optimized models, [ReasonFlux-Coder-7B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-7B) and [ReasonFlux-Coder-14B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-14B), which outperform similarly sized Qwen Coders and DeepSeek Coders, and naturally fit into common test-time scaling and agentic coding pipelines. We also release our Long-CoT model [ReasonFlux-Coder-4B](https://huggingface.co/Gen-Verse/ReasonFlux-Coder-4B), outperforming Qwen3-4B while achieving 64.8% efficiency in unit test generation.
 
 ## 🧠 Methods
 
