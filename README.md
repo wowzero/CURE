@@ -3,18 +3,11 @@
 </h2>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2505.15809">
+  <a href="https://arxiv.org/abs/2506.03136">
     <img
-      src="https://img.shields.io/badge/CURE-Arxiv-red?logo=arxiv&logoColor=red"
+      src="https://img.shields.io/badge/Paper-Arxiv-red?logo=arxiv&logoColor=red"
       alt="CURE Paper on arXiv"
     />
-  </a>
-  <a href="https://github.com/Gen-Verse/CURE">
-    <img 
-        src="https://img.shields.io/badge/Codes-Github-blue?logo=github&logoColor=white" 
-        alt="CURE code base on github"
-    />
-  </a>
   <a href="https://huggingface.co/collections/Gen-Verse/reasonflux-coder-6833109ed9300c62deb32c6b">
     <img 
         src="https://img.shields.io/badge/Datasets-Hugging%20Face%20Data-orange?logo=huggingface&logoColor=yellow" 
@@ -172,8 +165,13 @@ See instructions about configuration details and how to monitor the results in `
 
 
 ## 📖 Citation
-Feel free to cite our paper!
 ```
+@article{wang2025cure,
+  title={Co-Evolving LLM Coder and Unit Tester via Reinforcement Learning},
+  author={Wang, Yinjie and Yang, Ling and Tian, Ye and Shen, Ke and Wang, Mengdi},
+  journal={arXiv preprint arXiv:2506.03136},
+  year={2025}
+}
 ```
 
 ## 🤝 Acknowledgement
