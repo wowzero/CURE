@@ -178,7 +178,9 @@ See instructions about configuration details and how to monitor the results in `
 
 This code is heavily based on the amazing work of [Open-Reasoner-Zero](https://github.com/Open-Reasoner-Zero/Open-Reasoner-Zero/tree/main) and [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF)!
 
+## 💬 Discussion
 
+Please do not hesitate to report any issues you encounter.
 
 
 
