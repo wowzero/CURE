@@ -180,7 +180,7 @@ This code is heavily based on the amazing work of [Open-Reasoner-Zero](https://g
 
 ## 💬 Discussion
 
-Please do not hesitate to report any issues you encounter.
+Please do not hesitate to report any issues or difficulties you encounter.
 
 
 
