@@ -31,7 +31,7 @@
 </p>
 
 ## 🌌 Introduction
-We propose **CURE**, a novel reinforcement learning framework that co-evolves LLM coder and unit tester to improve the overall coding ability of large language models. Trained on just 4.5 K samples, our [ReasonFlux-Coder models](https://huggingface.co/collections/Gen-Verse/reasonflux-coder-6833109ed9300c62deb32c6b) outperform similarly sized Qwen Coder, DeepSeek Coder and Seed Coder. **Also, this is the first open-source Coding-RL project to make everything publicly available—including models, evaluation benchmarks, training and testing datasets, and training codes!**
+We propose **CURE**, a novel reinforcement learning framework that co-evolves LLM coder and unit tester to improve the overall coding ability of large language models. Trained on just 4.5 K samples, our [ReasonFlux-Coder models](https://huggingface.co/collections/Gen-Verse/reasonflux-coder-6833109ed9300c62deb32c6b) outperform similarly sized Qwen Coder, DeepSeek Coder and Seed Coder. **Also, we make everything publicly available—including models, comprehensive evaluation benchmarks, training and testing datasets, and training codes!**
 
 
 
