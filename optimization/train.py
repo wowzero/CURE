@@ -27,6 +27,8 @@ from typing import Any, Awaitable, Callable, List, Optional, Tuple
 from train_utils.dataset import PromptDataset
 from train_utils.rl.trainer import RayPPOTrainer
 from train_utils.base_exp import BasePPOExp, BasePPOExpConfig
+from train_utils.utils import _validate_args
+from ray.runtime_env import RuntimeEnv
 
 
 
@@ -112,18 +114,28 @@ class PPOExp(BasePPOExp):
         )
 
 
-def main(argv=None):
+async def _run_with_data(exp, rl_data):
+    _validate_args(exp.cfg)
+    ray.init(
+        runtime_env=RuntimeEnv(
+            env_vars={
+                "NCCL_DEBUG": "WARN",
+                "NCCL_PXN_DISABLE": "1",
+                "NCCL_ALGO": "^Ring",
+                "NCCL_NET_OVERHEAD": "1000000",
+                "CUDA_LAUNCH_BLOCKING": "1",
+            }
+        )
+    )
 
-    import argparse, sys, asyncio, os
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--pretrain", type=str)
-    args, unknown = parser.parse_known_args(argv)
+    await exp.trainer.build_models(exp.PolicyRayActor)
+    await exp.trainer.train(rl_data)
 
-    sys.argv = [sys.argv[0]] + unknown
 
+def main(rl_data, pretrain=None):
     cfg = PPOExpConfig()
-    if args.pretrain is not None:
-        cfg.pretrain = args.pretrain
+    if pretrain is not None:
+        cfg.pretrain = pretrain
 
     exp = PPOExp().set_cfg(cfg)
 
@@ -134,8 +146,25 @@ def main(argv=None):
         os.makedirs(exp.cfg.tensorboard_log_dir, exist_ok=True)
     if not os.path.exists(exp.cfg.ckpt_path):
         os.makedirs(exp.cfg.ckpt_path, exist_ok=True)
-    asyncio.run(exp.run())
+    asyncio.run(_run_with_data(exp, rl_data))
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pretrain", type=str)
+    parser.add_argument("--rl_data", type=str, default="temp_data/rl_data.json")
+    parser.add_argument("--rl_code_data", type=str, default="temp_data/rl_code_data.json")
+    parser.add_argument("--rl_case_data", type=str, default="temp_data/rl_case_data.json")
+    args = parser.parse_args()
+
+    if optimization_config.separate_training:
+        with open(args.rl_code_data, 'r') as f:
+            code_data = json.load(f)
+        with open(args.rl_case_data, 'r') as f:
+            case_data = json.load(f)
+        rl_data = (code_data, case_data)
+    else:
+        with open(args.rl_data, 'r') as f:
+            rl_data = json.load(f)
+
+    main(rl_data, pretrain=args.pretrain)

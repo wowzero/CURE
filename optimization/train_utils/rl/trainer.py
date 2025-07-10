@@ -56,21 +56,18 @@ class RayPPOTrainer:
     async def eval(self):
         raise NotImplementedError("Eval function should be implemented in user's exp")
 
-    async def train(self):
+    async def train(self, rl_data):
 
-        if self.cfg.separate_training == True:
-            train_data_list = [self.cfg.rl_code_data, self.cfg.rl_case_data]
+        if self.cfg.separate_training:
+            code_data, case_data = rl_data
+            train_data_list = [code_data, case_data]
         else:
-            train_data_list = [self.cfg.rl_data]
-        
-        for data_name in train_data_list:
+            train_data_list = [rl_data]
 
-            logger.info(f"Training with {data_name}")
+        for dataset in train_data_list:
+            logger.info("Training with provided dataset")
 
-            with open(data_name, 'r') as f:
-                rl_data = json.load(f)
-
-            await self.make_experience(rl_data)
+            await self.make_experience(dataset)
 
             num_policy_dp_nodes = self.cfg.actor_num_nodes * self.cfg.actor_num_gpus_per_node
             num_critic_dp_nodes = self.cfg.critic_num_nodes * self.cfg.critic_num_gpus_per_node

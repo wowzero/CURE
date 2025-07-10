@@ -2,9 +2,8 @@ import os
 import ast
 import json
 import random
-import argparse
 import numpy as np
-
+import argparse
 
 import optimization_config
 
@@ -26,31 +25,17 @@ import optimization_config
 def str2bool(x):
     return x.lower() in ("1", "true", "yes")
 
-def parse_args(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--pretrained_model", type=str, default=optimization_config.pretrained_model)
-    parser.add_argument("--dataset", type=str, default=optimization_config.train_dataset)
-    parser.add_argument("--max_generation_len", type=int, default=optimization_config.max_generation_token)
-    parser.add_argument("--max_len_threshold", type=int, default=optimization_config.max_len_threshold)
-    parser.add_argument("--min_len_threshold", type=int, default=optimization_config.min_len_threshold)
-    parser.add_argument("--separate_training", type=str2bool, default=optimization_config.separate_training)
-    parser.add_argument("--enable_efficient", type=str2bool, default=optimization_config.enable_efficient)
-    parser.add_argument("--post_stage", type=str2bool, default=optimization_config.post_stage)
-    return parser.parse_args(argv)
-
-def main(argv=None):
-    args = parse_args(argv)
-    globals().update(vars(args))
+def main(data):
+    max_generation_len = optimization_config.max_generation_token
+    max_len_threshold = optimization_config.max_len_threshold
+    min_len_threshold = optimization_config.min_len_threshold
+    separate_training = optimization_config.separate_training
+    enable_efficient = optimization_config.enable_efficient
+    post_stage = optimization_config.post_stage
 
 
 
-    # read the inference data
-    
-    outputs_name =  pretrained_model.replace("/", ".") + "-" + dataset
-    
-    os.makedirs(os.path.dirname("./temp_data/outputs-rl-" + outputs_name + ".json"), exist_ok=True)
-    with open("./temp_data/outputs-rl-" + outputs_name + ".json", 'r') as f:
-        data = json.load(f)
+    # data is directly provided by the execution stage
     
     
     
@@ -176,18 +161,33 @@ def main(argv=None):
     
     final_data = code_data + case_data
     random.shuffle(final_data)
-    
-    if separate_training == False:
-        with open("./temp_data/rl_data.json", "w", encoding="utf-8") as f:
-            json.dump(final_data, f, indent=2, ensure_ascii=False)
+
+    if separate_training:
+        return code_data, case_data
     else:
+        return final_data
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pretrained_model", type=str, default=optimization_config.pretrained_model)
+    parser.add_argument("--dataset", type=str, default=optimization_config.train_dataset)
+    args = parser.parse_args()
+
+    outputs_name = args.pretrained_model.replace("/", ".") + "-" + args.dataset
+    with open(f"./temp_data/outputs-rl-{outputs_name}.json", "r") as f:
+        data = json.load(f)
+
+    result = main(data)
+    os.makedirs("./temp_data", exist_ok=True)
+    if optimization_config.separate_training:
+        code_data, case_data = result
         with open("./temp_data/rl_code_data.json", "w", encoding="utf-8") as f:
             json.dump(code_data, f, indent=2, ensure_ascii=False)
         with open("./temp_data/rl_case_data.json", "w", encoding="utf-8") as f:
             json.dump(case_data, f, indent=2, ensure_ascii=False)
-
-
-if __name__ == "__main__":
-    main()
+    else:
+        with open("./temp_data/rl_data.json", "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
     
     
