@@ -8,7 +8,7 @@ from optimization import sample as sample_module
 from optimization import execute as execute_module
 from optimization import reward as reward_module
 from optimization import train as train_module
-from contextlib import contextmanager
+
 
 
 
@@ -40,15 +40,6 @@ eval_max_test = optimization_config.eval_max_test
 def begin_with(file_name):
     with open(file_name, "w") as f:
         f.write("")
-
-@contextmanager
-def cd(path):
-    prev = os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(prev)
 
 if start_from_scratch:
     os.makedirs("evaluation/results", exist_ok=True)
@@ -84,26 +75,22 @@ def evaluation(model, eval_dataset, gpu_groups):
 
 # samlpe
 def sample(model):
-    cprint(f"This is the {i}-th step for sampling.", color = "green")
-    with cd('optimization'):
-        sample_module.main(["--pretrained_model", model])
+    cprint(f"This is the {i}-th step for sampling.", color="green")
+    return sample_module.main(["--pretrained_model", model])
 
 # execute
-def execute(model, iteration):
-    cprint(f"This is the {i}-th step for execution.", color = "green")
-    with cd('optimization'):
-        execute_module.main(["--pretrained_model", model, "--iteration", str(iteration)])
+def execute(data, iteration):
+    cprint(f"This is the {i}-th step for execution.", color="green")
+    return execute_module.main(data, iteration=iteration)
 
 # assign reward
-def assign_reward(model):
-    with cd('optimization'):
-        reward_module.main(["--pretrained_model", model])
+def assign_reward(data):
+    return reward_module.main(data)
 
 # train
-def train(model):
-    cprint(f"This is the {i}-th step for training.", color = "green")
-    with cd('optimization'):
-        train_module.main(["--pretrain", model])
+def train(rl_data, model):
+    cprint(f"This is the {i}-th step for training.", color="green")
+    train_module.main(rl_data)
     subprocess.run("rm -f optimization/ckpt/event*", shell=True, check=True)
 
 # save
@@ -115,10 +102,10 @@ def save(model_from, model_to):
 # the first step if train from scratch
 i = 0
 #evaluation(pretrain_model, eval_dataset, gpu_groups)
-sample(pretrain_model)
-execute(pretrain_model, i)
-assign_reward(pretrain_model)
-train(pretrain_model)
+data = sample(pretrain_model)
+data = execute(data, i)
+rl_data = assign_reward(data)
+train(rl_data, pretrain_model)
 i += 1
 
 # start the iterative optimization
@@ -132,10 +119,10 @@ while i <= total_steps:
     if i == total_steps:
         break
 
-    sample(model)
-    execute(model, i)
-    assign_reward(model)
-    train(model)
+    data = sample(model)
+    data = execute(data, i)
+    rl_data = assign_reward(data)
+    train(rl_data, model)
 
     i += 1
 

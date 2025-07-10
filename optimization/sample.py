@@ -407,14 +407,9 @@ def main(argv=None):
         data[index_i]["case_response_length"].append(case_response_length[i])
         i += 1
     
-    # output the data
-    os.makedirs(os.path.dirname("./temp_data/outputs-" + outputs_name + ".json"), exist_ok=True)
-    with open("./temp_data/outputs-" + outputs_name + ".json", "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    
-    
-    
+    # stop workers and return data instead of writing to disk
     stop_workers(task_queues, processes)
+    return data
 
 
 if __name__ == "__main__":
