@@ -112,12 +112,12 @@ class PPOExp(BasePPOExp):
         )
 
 
-if __name__ == "__main__":
+def main(argv=None):
 
     import argparse, sys, asyncio, os
     parser = argparse.ArgumentParser()
     parser.add_argument("--pretrain", type=str)
-    args, unknown = parser.parse_known_args()
+    args, unknown = parser.parse_known_args(argv)
 
     sys.argv = [sys.argv[0]] + unknown
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         cfg.pretrain = args.pretrain
 
     exp = PPOExp().set_cfg(cfg)
-    
+
     logger.info(exp.get_cfg_as_str(exp.cfg))
     if not os.path.exists(exp.cfg.save_path):
         os.makedirs(exp.cfg.save_path, exist_ok=True)
@@ -135,3 +135,7 @@ if __name__ == "__main__":
     if not os.path.exists(exp.cfg.ckpt_path):
         os.makedirs(exp.cfg.ckpt_path, exist_ok=True)
     asyncio.run(exp.run())
+
+
+if __name__ == "__main__":
+    main()
