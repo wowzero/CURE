@@ -116,7 +116,7 @@ def run_scripts_with_chunk(code_list, test_input_list, time_limit_list, worker, 
         i += 1
     return exe_results
 
-def execute_scripts(outputs_name, num_chunks):
+def execute_scripts(outputs_name, num_chunks, iteration=None):
 
     os.makedirs(os.path.dirname("./temp_data/outputs-" + outputs_name + '.json'), exist_ok=True)
     with open("./temp_data/outputs-" + outputs_name + '.json', 'r') as f:
@@ -271,6 +271,11 @@ def execute_scripts(outputs_name, num_chunks):
     os.makedirs(os.path.dirname("./temp_data/outputs-" + outputs_name + ".json"), exist_ok=True)
     with open("./temp_data/outputs-" + outputs_name + ".json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+    if iteration is not None:
+        iter_path = f"./temp_data/outputs-{outputs_name}-iter{iteration}.json"
+        os.makedirs(os.path.dirname(iter_path), exist_ok=True)
+        with open(iter_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 
@@ -280,23 +285,29 @@ def execute_scripts(outputs_name, num_chunks):
 def str2bool(x):
     return x.lower() in ("1", "true", "yes")
 
-def parse_args():
+def parse_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--pretrained_model", type=str, default=optimization_config.pretrained_model)
     parser.add_argument("--dataset", type=str, default=optimization_config.train_dataset)
     parser.add_argument("--num_chunks", type=int, default=optimization_config.num_chunks)
     parser.add_argument("--scale_tuple_list", type=ast.literal_eval, default=optimization_config.scale_tuple_list)
-    return parser.parse_args()
+    parser.add_argument("--iteration", type=int, default=None)
+    return parser.parse_args(argv)
 
-args = parse_args()
-globals().update(vars(args))
+def main(argv=None):
+    args = parse_args(argv)
+    globals().update(vars(args))
 
 
-# read processed data
-outputs_name = "rl-" + pretrained_model.replace("/", ".") + "-" + dataset
+    # read processed data
+    outputs_name = "rl-" + pretrained_model.replace("/", ".") + "-" + dataset
+    
+    # execute
+    execute_scripts(outputs_name, num_chunks, iteration)
 
-# execute
-execute_scripts(outputs_name, num_chunks)
+
+if __name__ == "__main__":
+    main()
 
 
 

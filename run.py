@@ -4,6 +4,11 @@ import subprocess
 from termcolor import cprint
 
 from optimization import optimization_config
+from optimization import sample as sample_module
+from optimization import execute as execute_module
+from optimization import reward as reward_module
+from optimization import train as train_module
+from contextlib import contextmanager
 
 
 
@@ -35,6 +40,15 @@ eval_max_test = optimization_config.eval_max_test
 def begin_with(file_name):
     with open(file_name, "w") as f:
         f.write("")
+
+@contextmanager
+def cd(path):
+    prev = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev)
 
 if start_from_scratch:
     os.makedirs("evaluation/results", exist_ok=True)
@@ -71,45 +85,25 @@ def evaluation(model, eval_dataset, gpu_groups):
 # samlpe
 def sample(model):
     cprint(f"This is the {i}-th step for sampling.", color = "green")
-    subprocess.run(
-        f'python sample.py '
-        f'--pretrained_model {model} ',
-        shell=True,
-        cwd='optimization',
-        check=True,
-    )
+    with cd('optimization'):
+        sample_module.main(["--pretrained_model", model])
 
 # execute
-def execute(model):
+def execute(model, iteration):
     cprint(f"This is the {i}-th step for execution.", color = "green")
-    subprocess.run(
-        f'python execute.py '
-        f'--pretrained_model {model} ',
-        shell=True,
-        cwd='optimization',
-        check=True,
-    )
+    with cd('optimization'):
+        execute_module.main(["--pretrained_model", model, "--iteration", str(iteration)])
 
 # assign reward
 def assign_reward(model):
-    subprocess.run(
-        f'python reward.py '
-        f'--pretrained_model {model} ',
-        shell=True,
-        cwd='optimization',
-        check=True,
-    )
+    with cd('optimization'):
+        reward_module.main(["--pretrained_model", model])
 
 # train
 def train(model):
     cprint(f"This is the {i}-th step for training.", color = "green")
-    subprocess.run(
-        f'python -m train '
-        f'--pretrain {model} ',
-        shell=True,
-        cwd='optimization',
-        check=True
-    )
+    with cd('optimization'):
+        train_module.main(["--pretrain", model])
     subprocess.run("rm -f optimization/ckpt/event*", shell=True, check=True)
 
 # save
@@ -122,7 +116,7 @@ def save(model_from, model_to):
 i = 0
 #evaluation(pretrain_model, eval_dataset, gpu_groups)
 sample(pretrain_model)
-execute(pretrain_model)
+execute(pretrain_model, i)
 assign_reward(pretrain_model)
 train(pretrain_model)
 i += 1
@@ -139,7 +133,7 @@ while i <= total_steps:
         break
 
     sample(model)
-    execute(model)
+    execute(model, i)
     assign_reward(model)
     train(model)
 
